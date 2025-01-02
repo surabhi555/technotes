@@ -2,10 +2,16 @@ const express=require('express')
 const router=express.Router()
 const usersController=require('../controllers/usersController')
 
-router.route('/')
-.get(usersController.getAllUser)
-.post(usersController.createNewUser)
-.patch(usersController.updateUser)
-.delete(usersController.deleteUser)
+router.get('/users', usersController.getAllUsers);
 
-module.exports=router
+// POST create new user
+router.post('/users', usersController.createNewUser);
+
+// PATCH update user
+router.patch('/users', usersController.updateUser);
+
+// DELETE delete user
+router.delete('/users', usersController.deleteUser);
+
+module.exports = router;
+

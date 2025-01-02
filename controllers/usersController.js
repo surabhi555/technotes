@@ -6,13 +6,13 @@ const asyncHandler=require('express-async-handler')
 
 const bcrypt=require('bcrypt')
 // @desc get all user
-// @route GET/URLSearchParams
+// @route GET/users
 // @access Private
-const getAllUser=asyncHandler(async(req,res)=>{
-    console.log("in get")
-   const users=await User.find().select('-password').lean()
-   if(!users.length){
-    return res.status(400).json({message:'No users found!'})
+const getAllUsers = asyncHandler(async(req,res)=>{
+    // console.log("in get")
+   const users = await User.find().select('-password').lean()
+   if(!users?.length){
+    return res.status(400).json({ message:'No users found!' })
    } 
    res.json(users)
 })
@@ -20,19 +20,19 @@ const getAllUser=asyncHandler(async(req,res)=>{
 // @desc create new user
 // @route POST/users
 // @access Private
-const createNewUser=asyncHandler(async(req,res)=>{
-    const{ username,password,roles}=req.body
+const createNewUser = asyncHandler(async(req,res)=>{
+    const{ username,password,roles} = req.body
 
     //confirm data
 
     if(!username || !password ||!Array.isArray(roles) ||!roles.length){
         return res.status(400).json({
-            message:'All fields are requiired'
+            message:'All fields are required'
         })
     }
 
     //check for dups
-    const duplicate=await User.findOne({ username}).lean().exec()
+    const duplicate = await User.findOne({ username}).lean().exec()
 
     if(duplicate){
         return res.status(409).json({
@@ -40,7 +40,7 @@ const createNewUser=asyncHandler(async(req,res)=>{
         })
     }
     //hash the password
-    const hasedPWD=await bcrypt.hash(password,10) //salt rounds
+    const hashedPWD = await bcrypt.hash(password,10) //salt rounds
 
     const userObject={
         username,
@@ -48,7 +48,7 @@ const createNewUser=asyncHandler(async(req,res)=>{
         roles
     }
     //create and store new user
-    const user=await User.create(userObject)
+    const user = await User.create(userObject)
 
     if(user){
         res.status(201).json({ message:`New user ${username} created`})
@@ -64,7 +64,7 @@ const createNewUser=asyncHandler(async(req,res)=>{
 // @route PATCH/users
 // @access Private
 const updateUser=asyncHandler(async(req,res)=>{
-    const{id,username,password,roles,active}=req.body
+    const { id , username , roles , active , password  }=req.body
 
     //confirm data
     if(!id || !username ||!Array.isArray(roles) || !roles.length ||typeof active!=='boolean'){
@@ -72,11 +72,11 @@ const updateUser=asyncHandler(async(req,res)=>{
             message:'All fields are required!'
         })
     }
-    const user=await User.findById(id).exec()
+    const user = await User.findById(id).exec()
 
     if(!user){
         return res.status(400).json({
-            message:'user not found'
+            message:'user not found'    
         })
     }
     //check for duplicates
@@ -91,7 +91,7 @@ const updateUser=asyncHandler(async(req,res)=>{
     user.roles=roles
     user.active=active
 
-    if(password){
+    if(password){ 
         //hash password
         user.password = await bcrypt.hash(password,10)
     }
@@ -131,7 +131,7 @@ const deleteUser=asyncHandler(async(req,res)=>{
 })
 
 module.exports={
-    getAllUser,
+    getAllUsers,
     createNewUser,
     updateUser,
     deleteUser
