@@ -5,7 +5,7 @@ const {
     createNewNote,
     updateNote,
     deleteNote
-} = require('../controllers/notesController');
+} = require('../controllers/notesController.js');
 
 // Route for getting all notes
 router.get('/', getAllNotes);
